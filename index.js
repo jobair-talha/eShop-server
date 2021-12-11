@@ -123,28 +123,6 @@ async function run() {
       );
       res.json(result);
     });
-    /*     //GET Products with pagination
-    app.get("/products", async (req, res) => {
-      const cursor = productCollection.find({});
-      const page = req.query.page;
-      const size = parseInt(req.query.size);
-      let products;
-      const count = await cursor.count();
-
-      if (page) {
-        products = await cursor
-          .skip(page * size)
-          .limit(size)
-          .toArray();
-      } else {
-        products = await cursor.toArray();
-      }
-
-      res.send({
-        count,
-        products,
-      });
-    }); */
 
     // Delete Product
     app.delete("/delete/:id", async (req, res) => {
@@ -153,13 +131,6 @@ async function run() {
       const result = await productsCollection.deleteOne(query);
       res.send(result);
     });
-
-    /* // Add Orders API
-    app.post("/orders", async (req, res) => {
-      const order = req.body;
-      const result = await orderCollection.insertOne(order);
-      res.json(result);
-    }); */
   } finally {
     // await client.close();
   }
