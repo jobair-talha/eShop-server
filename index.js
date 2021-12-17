@@ -114,11 +114,24 @@ async function run() {
       res.json(result);
     });
 
+    // search Product
+    app.get("/search", async (req, res) => {
+      const products = await productsCollection.find({}).toArray();
+      const search = req.query.name;
+
+      const searchResult = products.filter((product) =>
+        product.name.toLowerCase().includes(search.toLowerCase())
+      );
+
+      res.json(searchResult);
+    });
+
     // search product by catagories & brand
     app.get("/brands", async (req, res) => {
       const catagories = req.query.catagories;
       const brand = req.query.brand;
       const query = { catagories: catagories, brand: brand };
+      console.log(query);
 
       const result = await productsCollection.find(query).toArray();
       res.json(result);
