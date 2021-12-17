@@ -26,6 +26,7 @@ async function run() {
     const database = client.db("eShop");
     const productsCollection = database.collection("products");
     const usersCollection = database.collection("users");
+    const ordersCollection = database.collection("orders");
 
     // add user
     app.post("/users", async (req, res) => {
@@ -89,6 +90,41 @@ async function run() {
       res.json(result);
     });
 
+    // get home product
+    app.get("/homeproducts", async (req, res) => {
+      const result = await productsCollection.find({}).limit(12).toArray();
+      res.json(result);
+    });
+
+    // search product by catagories
+    app.get("/catagories", async (req, res) => {
+      const catagories = req.query.catagories;
+      const query = { catagories: catagories };
+      const result = await productsCollection.find(query).toArray();
+      res.json(result);
+    });
+
+    // search product by catagories & type
+    app.get("/equipment", async (req, res) => {
+      const catagories = req.query.catagories;
+      const type = req.query.type;
+      const query = { catagories: catagories, type: type };
+
+      const result = await productsCollection.find(query).toArray();
+      res.json(result);
+    });
+
+    // search product by catagories & brand
+    app.get("/brands", async (req, res) => {
+      const catagories = req.query.catagories;
+      const brand = req.query.brand;
+      const query = { catagories: catagories, brand: brand };
+
+      const result = await productsCollection.find(query).toArray();
+      res.json(result);
+    });
+
+    // get single product by id
     app.get("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -97,10 +133,10 @@ async function run() {
       res.json(result);
     });
 
+    // Update Product
     app.put("/update/:id", async (req, res) => {
       const id = req.params.id;
       const updateService = req.body;
-      console.log(updateService);
       const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
 
@@ -122,6 +158,29 @@ async function run() {
         options
       );
       res.json(result);
+    });
+
+    //GET Products with pagination
+    app.get("/products", async (req, res) => {
+      const cursor = productsCollection.find({});
+      const page = req.query.page;
+      const size = parseInt(req.query.size);
+      let products;
+      const count = await cursor.count();
+
+      if (page) {
+        products = await cursor
+          .skip(page * size)
+          .limit(size)
+          .toArray();
+      } else {
+        products = await cursor.toArray();
+      }
+
+      res.send({
+        count,
+        products,
+      });
     });
 
     // Delete Product
