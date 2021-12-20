@@ -75,7 +75,6 @@ async function run() {
       const cursor = req.body;
       const pic = req.files.image;
       const picData = pic.data;
-      console.log(picData);
       const encodedPic = picData.toString("base64");
       const imageBuffer = Buffer.from(encodedPic, "base64");
       const productDetails = { ...cursor, image: imageBuffer };
@@ -194,6 +193,60 @@ async function run() {
         count,
         products,
       });
+    });
+
+    // Add Order
+    app.post("/orders", async (req, res) => {
+      const cursor = req.body;
+
+      const result = await ordersCollection.insertOne(cursor);
+      res.json(result);
+    });
+
+    // Get All Order
+    app.get("/orders", async (req, res) => {
+      const cursor = ordersCollection.find({});
+      const count = await cursor.count();
+      const orders = await cursor.toArray();
+      res.json({ count, orders });
+    });
+
+    // Update Order
+    app.put("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateOrder = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+
+      const updateDoc = {
+        $set: {
+          status: updateOrder.status,
+        },
+      };
+      const result = await ordersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.json(result);
+    });
+
+    // Get User Order
+    app.get("/user-orders", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+
+      const result = await ordersCollection.find(query).toArray();
+      res.json(result);
+    });
+
+    // get single Order by id
+    app.get("/order/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+
+      const result = await ordersCollection.findOne(query);
+      res.json(result);
     });
 
     // Delete Product
