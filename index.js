@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xuu56.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@talha.nrxwp7m.mongodb.net/Eshop`;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
