@@ -263,7 +263,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("eShop Server is continue starting");
+  res.send("eShop Server is Running");
 });
 
 app.listen(port, () => {
